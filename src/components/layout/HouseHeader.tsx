@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { House } from '../../types';
 import { NotificationDrawer } from './NotificationDrawer';
 import { CartoonIcon } from '../common/CartoonIcon';
+import { useAuth } from '../../context/AuthContext';
+import { DeviceNotification } from '../../lib/deviceNotification';
 
 interface HouseHeaderProps {
   houses: House[];
@@ -18,11 +20,13 @@ export const HouseHeader: React.FC<HouseHeaderProps> = ({
   onCreateHouse,
   onNavigateTab,
 }) => {
+  const { user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newHouseName, setNewHouseName] = useState('');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,10 +134,15 @@ export const HouseHeader: React.FC<HouseHeaderProps> = ({
             )}
           </button>
 
-          {/* House Avatar */}
-          <span className="w-8 h-8 rounded-full bg-brand-soft text-brand-primary flex items-center justify-center font-bold text-xs shadow-sm">
-            {activeHouse?.name?.slice(0, 1) || 'H'}
-          </span>
+          {/* House Avatar & Settings Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen(true)}
+            className="w-8 h-8 rounded-full bg-brand-soft text-brand-primary flex items-center justify-center font-bold text-xs shadow-sm active:scale-90 hover:ring-2 hover:ring-brand-primary/40 transition cursor-pointer"
+            title="โปรไฟล์และการตั้งค่า"
+          >
+            {user?.displayName ? user.displayName.slice(0, 1) : activeHouse?.name?.slice(0, 1) || 'H'}
+          </button>
         </div>
       </header>
 
@@ -145,6 +154,112 @@ export const HouseHeader: React.FC<HouseHeaderProps> = ({
         onNavigateTab={onNavigateTab}
         onUpdateUnreadCount={setUnreadCount}
       />
+
+      {/* Settings Modal (การตั้งค่าในระบบ) */}
+      {isSettingsOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in"
+          onClick={() => setIsSettingsOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-surface rounded-3xl p-5 shadow-2xl border border-surface-muted space-y-4 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-surface-muted">
+              <div className="flex items-center gap-2">
+                <CartoonIcon name="settings" size={22} />
+                <h2 className="text-sm font-bold text-text-main">การตั้งค่าระบบ</h2>
+              </div>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="w-7 h-7 rounded-full bg-surface-subtle text-text-muted hover:text-text-main flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Profile Info */}
+            <div className="p-3.5 rounded-2xl bg-surface-subtle border border-surface-muted flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-brand-primary text-white font-bold text-lg flex items-center justify-center shadow-xs">
+                {user?.displayName?.slice(0, 1) || 'H'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xs font-bold text-text-main truncate">
+                  {user?.displayName || 'สมาชิก Homie'}
+                </h3>
+                <p className="text-[11px] text-text-muted">{user?.phone || 'ไม่ระบุเบอร์'}</p>
+                <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-100 text-green-800">
+                  กำลังใช้งาน
+                </span>
+              </div>
+            </div>
+
+            {/* Settings Options */}
+            <div className="space-y-2 text-xs">
+              <div className="text-[10px] font-semibold text-text-muted uppercase px-1">
+                การแจ้งเตือนและการเข้าถึง
+              </div>
+
+              {/* Notification toggle */}
+              <div className="p-3 rounded-2xl bg-surface border border-surface-muted flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-text-main">แจ้งเตือนบนอุปกรณ์</p>
+                  <p className="text-[10px] text-text-muted">เฉพาะงานเกินกำหนดและยอดเงินค้าง</p>
+                </div>
+                {DeviceNotification.isSupported() ? (
+                  DeviceNotification.getPermission() === 'granted' ? (
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                      เปิดแล้ว ✓
+                    </span>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        const res = await DeviceNotification.requestPermission();
+                        if (res === 'granted') {
+                          DeviceNotification.send('Homie Home', {
+                            body: 'เปิดการแจ้งเตือนงานและการเงินในบ้านสำเร็จแล้ว!',
+                          });
+                          setIsSettingsOpen(false);
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-xl bg-brand-primary text-white font-bold text-[10px] active:scale-95 transition"
+                    >
+                      เปิดแจ้งเตือน
+                    </button>
+                  )
+                ) : (
+                  <span className="text-[10px] text-text-muted">ไม่รองรับบนเบราว์เซอร์นี้</span>
+                )}
+              </div>
+
+              {/* Current House Info */}
+              <div className="p-3 rounded-2xl bg-surface border border-surface-muted flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-text-main">บ้านปัจจุบัน</p>
+                  <p className="text-[10px] text-text-muted">{activeHouse?.name || 'ไม่มีบ้าน'}</p>
+                </div>
+                <span className="text-[10px] text-text-muted bg-surface-subtle px-2 py-1 rounded-lg">
+                  ID: {activeHouse?.id?.slice(0, 6)}...
+                </span>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <div className="pt-2 border-t border-surface-muted">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  logout();
+                }}
+                className="w-full py-2.5 px-4 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 font-bold text-xs active:scale-98 transition flex items-center justify-center gap-2"
+              >
+                <span>ออกจากระบบ</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

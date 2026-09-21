@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { HouseProvider, useHouse } from './context/HouseContext';
@@ -10,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MembersPage } from './pages/MembersPage';
 import { HouseHeader } from './components/layout/HouseHeader';
 import { CartoonIcon } from './components/common/CartoonIcon';
+import { DeviceNotification } from './lib/deviceNotification';
 
 type TabType = 'tasks' | 'finance' | 'dashboard' | 'members';
 
@@ -21,6 +22,21 @@ function AppShell() {
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [isFinanceSettleOpen, setIsFinanceSettleOpen] = useState(false);
   const [isMemberActionSheetOpen, setIsMemberActionSheetOpen] = useState(false);
+
+  // Prompt for device notification immediately after logging in
+  useEffect(() => {
+    if (token && isSessionUnlocked && DeviceNotification.isSupported()) {
+      if (DeviceNotification.getPermission() === 'default') {
+        DeviceNotification.requestPermission().then((perm) => {
+          if (perm === 'granted') {
+            DeviceNotification.send('Homie Home', {
+              body: 'เปิดการแจ้งเตือนงานและการเงินในบ้านสำเร็จแล้ว!',
+            });
+          }
+        });
+      }
+    }
+  }, [token, isSessionUnlocked]);
 
   if (isAuthLoading) {
     return (

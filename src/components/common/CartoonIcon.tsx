@@ -16,6 +16,7 @@ export type CartoonIconName =
   | 'check'
   | 'sparkles'
   | 'lock'
+  | 'settings'
   | 'warn';
 
 interface CartoonIconProps {
@@ -209,6 +210,19 @@ export const CartoonIcon: React.FC<CartoonIconProps> = ({
           <path d="M17 19V14C17 10 20 7 24 7C28 7 31 10 31 14V19" stroke="#EA580C" strokeWidth="3.5" strokeLinecap="round" />
           <circle cx="24" cy="29" r="3" fill="#C2410C" />
           <path d="M24 32V36" stroke="#C2410C" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+      );
+
+    case 'settings':
+      return (
+        <svg width={pixelSize} height={pixelSize} viewBox="0 0 48 48" fill="none" className={className}>
+          <circle cx="24" cy="24" r="7" fill="#FED7AA" stroke="#EA580C" strokeWidth="3" />
+          <path
+            d="M24 4V8M24 40V44M4 24H8M40 24H44M9.86 9.86L12.69 12.69M35.31 35.31L38.14 38.14M9.86 38.14L12.69 35.31M35.31 12.69L38.14 9.86"
+            stroke="#EA580C"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
         </svg>
       );
 

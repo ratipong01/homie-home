@@ -102,7 +102,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
         }
 
         setNotifications(items);
-        const unread = items.filter((item) => !readIds.has(item.id)).length;
+        // Only count necessary, actionable items (not system-all-clear placeholder)
+        const unread = items.filter((item) => item.type !== 'SYSTEM' && !readIds.has(item.id)).length;
         onUpdateUnreadCount?.(unread);
       } catch (_e) {
         // Handled

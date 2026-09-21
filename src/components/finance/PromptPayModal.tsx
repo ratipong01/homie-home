@@ -50,8 +50,8 @@ export const PromptPayModal: React.FC<PromptPayModalProps> = ({
           </span>
         </div>
 
-        <div className="p-3 bg-surface-subtle rounded-2xl border border-surface-muted inline-block">
-          <img src={qrImageUrl} alt="PromptPay QR" className="w-48 h-48 mx-auto rounded-xl" />
+        <div className="p-3 bg-white rounded-2xl border-2 border-white shadow-sm inline-block">
+          <img src={qrImageUrl} alt="PromptPay QR" className="w-48 h-48 mx-auto rounded-xl p-0.5 bg-white" />
         </div>
 
         <div className="space-y-2 pt-1">
