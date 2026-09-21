@@ -6,6 +6,7 @@ interface TaskCardProps {
   task: Task;
   isMyTask: boolean;
   holderName?: string;
+  canReturn?: boolean;
   onClick: () => void;
   onQuickComplete?: (e: React.MouseEvent) => void;
   onQuickReturn?: (e: React.MouseEvent) => void;
@@ -15,6 +16,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   task,
   isMyTask,
   holderName,
+  canReturn = false,
   onClick,
   onQuickComplete,
   onQuickReturn,
@@ -88,7 +90,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                 เสร็จสิ้น
               </button>
             )}
-            {onQuickReturn && (
+            {canReturn && onQuickReturn && (
               <button
                 type="button"
                 onClick={onQuickReturn}

@@ -69,14 +69,32 @@ export const TasksPage: React.FC<TasksPageProps> = ({
 
   const handleQuickReturn = async (task: Task) => {
     if (!activeHouse) return;
-    const creatorMember = members.find(
-      (m) => m.userId === ((task as any).created_by || task.createdBy)
-    );
-    if (!creatorMember) return;
+    // Fetch task detail to get the full handover timeline
+    let toMemberId: string | undefined;
+    try {
+      const detail = await taskApi.getTaskDetail(activeHouse.id, task.id);
+      const timeline = detail.task.timeline || [];
+      // Find the most recent log that delivered the task TO the current holder
+      const lastInbound = [...timeline]
+        .reverse()
+        .find((log) => log.toMemberId === ((task as any).currentHolderId || task.currentHolderId));
+      if (lastInbound) {
+        toMemberId = lastInbound.fromMemberId;
+      }
+    } catch (_e) {}
+
+    // Fallback: return to the task creator's member record
+    if (!toMemberId) {
+      const creatorUserId = (task as any).created_by || task.createdBy;
+      const creatorMember = members.find((m) => m.userId === creatorUserId);
+      if (!creatorMember) return;
+      toMemberId = creatorMember.id;
+    }
+
     await taskApi.handoverTask(activeHouse.id, task.id, {
       action: 'RETURN',
-      toMemberId: creatorMember.id,
-      note: 'ส่งกลับให้ผู้สร้าง',
+      toMemberId,
+      note: 'ส่งกลับ',
     });
     await fetchTasks();
   };
@@ -200,12 +218,18 @@ export const TasksPage: React.FC<TasksPageProps> = ({
                 beneficiaryMember?.memberType || t.beneficiaryType,
             };
 
+            const creatorUserId = (t as any).created_by || t.createdBy;
+            const holderIsCreator =
+              holderMember?.userId === creatorUserId ||
+              holderMember?.id === creatorUserId; // safeguard for virtual members without userId
+
             return (
               <TaskCard
                 key={t.id}
                 task={enrichedTask}
                 isMyTask={Boolean(isMine)}
                 holderName={holderMember?.displayName}
+                canReturn={Boolean(isMine && !holderIsCreator)}
                 onClick={() => handleOpenDetail(t.id)}
                 onQuickComplete={() => handleQuickComplete(t)}
                 onQuickReturn={() => handleQuickReturn(t)}

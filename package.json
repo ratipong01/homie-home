@@ -8,22 +8,29 @@
     "dev:frontend": "vite",
     "dev:backend": "npm --prefix backend run dev",
     "dev:all": "node scripts/dev-all.mjs",
+    "dev:pages": "npx wrangler pages dev dist --compatibility-date 2024-09-01",
     "build": "tsc && vite build",
     "build:frontend": "tsc && vite build",
     "build:backend": "npm --prefix backend run build",
+    "deploy": "npm run build:frontend && npx wrangler pages deploy dist",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.9.1",
     "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-query": "^5.66.0",
     "clsx": "^2.1.1",
+    "hono": "^4.13.8",
+    "jose": "^6.2.12",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260921.1",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

@@ -829,7 +829,11 @@ export const localFallbackHandler = {
 
     if (payload.action === 'COMPLETE') {
       task.status = 'COMPLETED';
+    } else if (payload.action === 'RETURN') {
+      task.currentHolderId = payload.toMemberId;
+      task.status = 'PENDING';
     } else {
+      // FORWARD
       task.currentHolderId = payload.toMemberId;
       task.status = 'IN_PROGRESS';
     }

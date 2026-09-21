@@ -1,0 +1,4 @@
+# SPA fallback – serve index.html for all non-API, non-asset routes
+# Cloudflare Pages Functions are matched FIRST (before these rules)
+# so /api/* is handled by functions/api/[[path]].ts, not redirected here.
+/* /index.html 200

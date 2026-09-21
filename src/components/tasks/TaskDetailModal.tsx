@@ -161,73 +161,101 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
         ) : null}
 
         {/* Handover Actions for Current Holder */}
-        {task.status !== 'COMPLETED' && isMyTurn && (
-          <div className="space-y-2 pt-2 border-t border-surface-muted">
-            <h4 className="text-xs font-bold text-text-secondary uppercase">จัดการงานนี้</h4>
-            {!isHandoverOpen ? (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setIsHandoverOpen(true)}
-                  disabled={isLoading}
-                  className="py-2 px-3 rounded-xl bg-surface border border-surface-muted text-text-secondary text-xs font-bold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  ส่งต่อให้คนอื่น
-                </button>
-                <button
-                  onClick={() => onHandover('COMPLETE', currentHolderMember?.id || '')}
-                  disabled={isLoading}
-                  className="py-2 px-3 rounded-xl bg-emerald-600 text-white text-xs font-bold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  ปิดงานสำเร็จ
-                </button>
-              </div>
-            ) : (
-              <div className="p-3 rounded-xl bg-surface-subtle space-y-2">
-                <label className="block text-[11px] font-semibold text-text-secondary">
-                  เลือกผู้รับไม้ต่อ
-                </label>
-                <select
-                  value={handoverTarget}
-                  onChange={(e) => setHandoverTarget(e.target.value)}
-                  className="w-full px-2.5 py-1.5 text-xs bg-white rounded-lg border border-surface-muted outline-none"
-                >
-                  <option value="">เลือกสมาชิก</option>
-                  {members
-                    .filter((m) => m.id !== currentHolderMember?.id)
-                    .map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.displayName}
-                      </option>
-                    ))}
-                </select>
+        {task.status !== 'COMPLETED' && isMyTurn && (() => {
+          // Resolve previous holder from timeline for RETURN action
+          const timeline = task.timeline || [];
+          const lastInbound = [...timeline]
+            .reverse()
+            .find((log) => log.toMemberId === task.currentHolderId);
+          const returnTargetId = lastInbound
+            ? lastInbound.fromMemberId
+            : members.find((m) => m.userId === task.createdBy)?.id || '';
 
-                <input
-                  type="text"
-                  value={handoverNote}
-                  onChange={(e) => setHandoverNote(e.target.value)}
-                  placeholder="โน้ตเพิ่มเติม (ถ้ามี)"
-                  className="w-full px-2.5 py-1.5 text-xs bg-white rounded-lg border border-surface-muted outline-none"
-                />
+          const handleReturn = async () => {
+            if (!returnTargetId) return;
+            setIsLoading(true);
+            try {
+              await onHandover('RETURN', returnTargetId, 'ส่งกลับ');
+            } finally {
+              setIsLoading(false);
+            }
+          };
 
-                <div className="flex gap-2 pt-1">
+          return (
+            <div className="space-y-2 pt-2 border-t border-surface-muted">
+              <h4 className="text-xs font-bold text-text-secondary uppercase">จัดการงานนี้</h4>
+              {!isHandoverOpen ? (
+                <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={handleForward}
-                    disabled={isLoading || !handoverTarget}
-                    className="flex-1 py-1.5 bg-brand-primary text-white text-xs font-bold rounded-lg disabled:opacity-50"
+                    onClick={handleReturn}
+                    disabled={isLoading || !returnTargetId}
+                    className="py-2 px-2 rounded-xl bg-surface border border-surface-muted text-text-secondary text-xs font-bold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
-                    ส่งต่อ
+                    ↩️ ส่งกลับ
                   </button>
                   <button
-                    onClick={() => setIsHandoverOpen(false)}
-                    className="px-3 py-1.5 text-xs text-text-muted"
+                    onClick={() => setIsHandoverOpen(true)}
+                    disabled={isLoading}
+                    className="py-2 px-2 rounded-xl bg-surface border border-surface-muted text-text-secondary text-xs font-bold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
-                    ยกเลิก
+                    ➡️ ส่งต่อ
+                  </button>
+                  <button
+                    onClick={() => onHandover('COMPLETE', currentHolderMember?.id || '')}
+                    disabled={isLoading}
+                    className="py-2 px-2 rounded-xl bg-emerald-600 text-white text-xs font-bold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    ✔️ เสร็จสิ้น
                   </button>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              ) : (
+                <div className="p-3 rounded-xl bg-surface-subtle space-y-2">
+                  <label className="block text-[11px] font-semibold text-text-secondary">
+                    เลือกผู้รับไม้ต่อ
+                  </label>
+                  <select
+                    value={handoverTarget}
+                    onChange={(e) => setHandoverTarget(e.target.value)}
+                    className="w-full px-2.5 py-1.5 text-xs bg-white rounded-lg border border-surface-muted outline-none"
+                  >
+                    <option value="">เลือกสมาชิก</option>
+                    {members
+                      .filter((m) => m.id !== currentHolderMember?.id)
+                      .map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.displayName}
+                        </option>
+                      ))}
+                  </select>
+
+                  <input
+                    type="text"
+                    value={handoverNote}
+                    onChange={(e) => setHandoverNote(e.target.value)}
+                    placeholder="โน้ตเพิ่มเติม (ถ้ามี)"
+                    className="w-full px-2.5 py-1.5 text-xs bg-white rounded-lg border border-surface-muted outline-none"
+                  />
+
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={handleForward}
+                      disabled={isLoading || !handoverTarget}
+                      className="flex-1 py-1.5 bg-brand-primary text-white text-xs font-bold rounded-lg disabled:opacity-50"
+                    >
+                      ส่งต่อ
+                    </button>
+                    <button
+                      onClick={() => setIsHandoverOpen(false)}
+                      className="px-3 py-1.5 text-xs text-text-muted"
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Timeline */}
         <HandoverTimeline timeline={task.timeline || []} />
