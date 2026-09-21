@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <!-- Background Rich Warm Espresso & Deep Amber Base (Zero Pure Black) -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#431407" />
+      <stop offset="35%" stop-color="#7c2d12" />
+      <stop offset="70%" stop-color="#9a3412" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+
+    <!-- Sweeping Netflix-style Ribbon 1 (Amber Tangerine to Golden Sunrise) -->
+    <linearGradient id="ribbon1Grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0" />
+      <stop offset="25%" stop-color="#f97316" stop-opacity="0.85" />
+      <stop offset="55%" stop-color="#fb923c" stop-opacity="0.95" />
+      <stop offset="80%" stop-color="#fde047" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#fef08a" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Sweeping Ribbon 2 (Warm Crimson to Sunset Orange to Amber) -->
+    <linearGradient id="ribbon2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c" stop-opacity="0" />
+      <stop offset="30%" stop-color="#ea580c" stop-opacity="0.8" />
+      <stop offset="65%" stop-color="#f97316" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#fed7aa" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Ambient Glowing Orb (Radiant Warm Amber Core) -->
+    <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.75" />
+      <stop offset="40%" stop-color="#f97316" stop-opacity="0.55" />
+      <stop offset="75%" stop-color="#c2410c" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#7c2d12" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- House Silhouette Warm Glowing Cream/Gold Gradient -->
+    <linearGradient id="houseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="35%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fed7aa" />
+    </linearGradient>
+
+    <!-- Plus Symbol Radiant Sun Gradient -->
+    <linearGradient id="plusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="40%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+
+    <!-- Blur Filters for Ribbons and Glow -->
+    <filter id="blurRibbon" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="30" />
+    </filter>
+    <filter id="blurOrb" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="45" />
+    </filter>
+  </defs>
+
+  <!-- Base Warm Earth/Amber Background - Zero Black -->
+  <rect width="512" height="512" fill="url(#bgGrad)" />
+
+  <!-- Ambient Glowing Orb behind logo -->
+  <circle cx="256" cy="256" r="230" fill="url(#orbGlow)" filter="url(#blurOrb)" />
+
+  <!-- Dynamic Sweeping Light Ribbon 1 -->
+  <path d="M-80 440 L300 -80 L460 -80 L80 440 Z" fill="url(#ribbon1Grad)" filter="url(#blurRibbon)" transform="rotate(-18 256 256)" />
+
+  <!-- Dynamic Sweeping Light Ribbon 2 -->
+  <path d="M80 -80 L480 380 L380 480 L-20 20 Z" fill="url(#ribbon2Grad)" filter="url(#blurRibbon)" opacity="0.8" />
+
+  <!-- Radiant Golden Sun Streak -->
+  <ellipse cx="256" cy="256" rx="230" ry="58" fill="#fde047" opacity="0.32" filter="url(#blurRibbon)" transform="rotate(-35 256 256)" />
+
+  <!-- Soft subtle ambient warm orange rim border -->
+  <rect width="510" height="510" x="1" y="1" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-opacity="0.35" />
+
+  <!-- Centered Homie Home Brand Emblem -->
+  <g transform="translate(66, 66) scale(9.5)" style="filter: drop-shadow(0px 6px 14px rgba(67, 20, 7, 0.7)) drop-shadow(0px 2px 5px rgba(67, 20, 7, 0.35));">
+    <!-- House Silhouette -->
+    <path d="M20 4L4 16.8V32C4 34.2 5.8 36 8 36H32C34.2 36 36 34.2 36 32V16.8L20 4Z" fill="url(#houseGrad)" />
+    <!-- Inner Portal / Hearth -->
+    <path d="M15 36V23C15 21.34 16.34 20 18 20H22C23.66 20 25 21.34 25 23V36H15Z" fill="#F97316" fill-opacity="0.85" />
+    <!-- Plus Accent -->
+    <path d="M26 10H30V14H34V18H30V22H26V18H22V14H26V10Z" fill="url(#plusGrad)" />
+    <!-- Spark Core -->
+    <circle cx="20" cy="14" r="2.6" fill="#FFFFFF" />
+  </g>
+</svg>

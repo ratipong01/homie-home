@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#FFF7ED"/>
+  <!-- Glowing House Icon -->
+  <g transform="translate(6, 6) scale(1)">
+    <!-- House Silhouette -->
+    <path d="M18 3.6L3.6 15.12V28.8C3.6 30.78 5.22 32.4 7.2 32.4H28.8C30.78 32.4 32.4 30.78 32.4 28.8V15.12L18 3.6Z" fill="url(#favHouseGrad)"/>
+    <!-- Inner Portal / Hearth -->
+    <path d="M13.5 32.4V20.7C13.5 19.2 14.7 18 16.2 18H19.8C21.3 18 22.5 19.2 22.5 20.7V32.4H13.5Z" fill="#F97316" fill-opacity="0.9"/>
+    <!-- Plus Accent -->
+    <path d="M23.4 9H27V12.6H30.6V16.2H27V19.8H23.4V16.2H19.8V12.6H23.4V9Z" fill="url(#favPlusGrad)"/>
+    <!-- Spark Core -->
+    <circle cx="18" cy="12.6" r="2.3" fill="#FFFFFF"/>
+  </g>
+  <defs>
+    <linearGradient id="favHouseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB923C"/>
+      <stop offset="50%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+    <linearGradient id="favPlusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+  </defs>
+</svg>
