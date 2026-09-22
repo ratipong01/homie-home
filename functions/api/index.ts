@@ -1,5 +1,5 @@
 /**
- * functions/api/[[path]].ts
+ * functions/api/index.ts
  * Cloudflare Pages Function – handles ALL /api/* requests
  *
  * Runtime: Cloudflare Workers (V8 isolate)
